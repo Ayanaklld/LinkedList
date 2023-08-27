@@ -18,7 +18,7 @@ public class MyLinkedList implements MyList {
             node = new Node(null, null, value);
             first = node;
         } else {
-            node = new Node(last, null, value);
+            node = new Node(null, last, value);
             last.setNext(node);
         }
         last = node;
@@ -28,23 +28,22 @@ public class MyLinkedList implements MyList {
 
     @Override
     public void add(int index, String value) {
-
-        if (index < 0 || index > size){
-            System.out.println("Invalid");
-        } else if (index == 0){
-            add(value);
-        } else if (index == size){
-            add(value);
+        if (index == 0) {
+            first = new Node(first, null, value);
+        } else if (index == size) {
+            Node newNode = new Node(null, last, value);
+            last.setNext(newNode);
+            last = newNode;
         } else {
-            Node node = new Node(first,last, value);
-            for (int i = 0; i < index - 1; i++){
-                first = first.getNext();
-            }
-            node.setNext(first.getNext());
-            first.setNext(node);
-            size++;
+            Node current = getNodeIndex(index);
+            Node prev = current.getPrev();
+            Node newNode = new Node(current, prev, value);
+            current.setPrev(newNode);
+            prev.setNext(newNode);
+
         }
 
+        size++;
     }
 
     @Override
@@ -63,21 +62,21 @@ public class MyLinkedList implements MyList {
 
     @Override
     public void remove(int index) {
-        if (index < 0 || index >= size) {
-            System.out.println("Invalid index");
-            return;
-        }
-
-        Node current = getNodeIndex(index);
-
-        if (current.getNext() != null) {
-            current.getNext().setPrev(null);
+        if (index == 0){
+            if (first.getNext() != null){
+                first.getNext().setPrev(null);
+            }
+            first = first.getNext();
+        } else if (index == size - 1){
+            if (last.getPrev() != null){
+                last.getPrev().setNext(null);
+            }
+            last = last.getPrev();
         } else {
-            last = null;
+            Node current = getNodeIndex(index);
+            current.getPrev().setNext(current.getNext());
+            current.getNext().setPrev(current.getPrev());
         }
-
-        first = current.getNext();
-
         size--;
     }
 
